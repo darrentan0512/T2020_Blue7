@@ -156,101 +156,94 @@
 
         <!-- Demo scripts for this page-->
         <script src="js/demo/datatables-demo.js"></script>
-        <script src="js/demo/chart-area-demo.js"></script>
+      <%--  <script src="js/demo/chart-area-demo.js"></script>--%>
     </form>
 
 
     <script>
-        Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        Chart.defaults.global.defaultFontColor = '#292b2c';
+        function codeAddress() {
 
-        // Pie Chart Example
-        
-        var pieChartData = [];
-        var ctx = document.getElementById("myPieChart");
-        var myPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ["Blue", "Red", "Yellow", "Green"],
-                datasets: [{
-                    data: [100, 200, 11.25, 8.32],
-                    backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
-                }],
-            },
-        });
 
-        var barChartData = [];
+            Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+            Chart.defaults.global.defaultFontColor = '#292b2c';
 
-        $.ajax({
-            type: "POST",
-            url: "Details.aspx/getBarChartData",
-            data: JSON.stringify(userid),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (msg) {
-                alert(msg);
-            }
-        });
+            // Pie Chart Example
 
-        //var barChartData = [
-        //    {
-        //        'month': 'June',
-        //        'data': [10, 20]
-        //    },
-        //    {
-        //        'month': 'July',
-        //        'data': [20, 30]
-        //    },
-        //    {
-        //        'month': 'August',
-        //        'data': [30, 40]
-        //    }
-        //];
-        // Bar Chart Example
-        var ctx = document.getElementById("myBarChart");
-
-        var labels = []
-        var debitData = []
-        var creditData = []
-        for (var i = 0; i < barChartData.length; i++) {
-            labels[i] = barChartData[i]['month'];
-            debitData[i] = barChartData[i]['data'][0];
-            creditData[i] = barChartData[i]['data'][1];
-        }
-        console.log(debitData);
-        console.log(creditData);
-        console.log(labels);
-        var myLineChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: "Debit",
-                        backgroundColor: "#3e95cd",
-                        data: debitData
-                    }, {
-                        label: "Credit",
-                        backgroundColor: "#B22222",
-                        data: creditData
-                    }
-                ]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Debit Credit Account'
+            var pieChartData = [];
+            var ctx = document.getElementById("myPieChart");
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ["Blue", "Red", "Yellow", "Green"],
+                    datasets: [{
+                        data: [100, 200, 11.25, 8.32],
+                        backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
+                    }],
                 },
-                scales: {
-                    yAxes: [{
-                        display: true,
-                        ticks: {
-                            min: 0, // minimum value
-                        }
-                    }]
+            });
+
+            var barChartData = [];
+
+            $.ajax({
+                type: "POST",
+                url: "Details.aspx/getBarChartData",
+                contentType: "application/json; charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (msg) {
+                    bc(msg.d);
                 }
+            });
+            
+            function bc(barChartData) {
+                // Bar Chart Example
+                var ctx = document.getElementById("myBarChart");
+
+                var labels = []
+                var debitData = []
+                var creditData = []
+                for (var i = 0; i < barChartData.length; i++) {
+                    labels[i] = barChartData[i]['month'];
+                    debitData[i] = barChartData[i]['data'][0];
+                    creditData[i] = barChartData[i]['data'][1];
+                }
+                console.log(debitData);
+                console.log(creditData);
+                console.log(labels);
+                var myLineChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                        datasets: [
+                            {
+                                label: "Debit",
+                                backgroundColor: "#3e95cd",
+                                data: debitData
+                            }, {
+                                label: "Credit",
+                                backgroundColor: "#B22222",
+                                data: creditData
+                            }
+                        ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Debit Credit Account'
+                        },
+                        scales: {
+                            yAxes: [{
+                                display: true,
+                                ticks: {
+                                    min: 0, // minimum value
+                                }
+                            }]
+                        }
+                    }
+                });
             }
-        });
+        }
+        window.onload = codeAddress;
 
     </script>
 

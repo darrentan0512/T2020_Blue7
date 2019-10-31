@@ -120,6 +120,30 @@ namespace DBSTech
             return custDetailsObj;
         }
 
+        public static List<Transactions> api_getListOfTransactionsStatic(string accountId, DateTime date_from, DateTime date_to)
+        {
+            string json_from = date_from.ToString("MM-dd-yyyy");
+            string json_to = date_to.ToString("MM-dd-yyyy");
+
+            var client = new RestClient($"http://techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com/transactions/{accountId}?from={json_from}&to={json_to}");
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("Connection", "keep-alive");
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("Host", "techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com");
+            request.AddHeader("Postman-Token", "11dd9441-13fa-498b-a131-2ff6d3f10a23,6e235017-a5be-4b44-b292-6213fd793060");
+            request.AddHeader("Cache-Control", "no-cache");
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("User-Agent", "PostmanRuntime/7.19.0");
+            request.AddHeader("token", "608cf106-2384-46de-8271-5c1f0b40ee5c");
+            request.AddHeader("identity", "Group7");
+            IRestResponse response = client.Execute(request);
+
+            List<Transactions> custDetailsObj = JsonConvert.DeserializeObject<List<Transactions>>(response.Content);
+
+            return custDetailsObj;
+        }
+
         public class Transactions
         {
             public string transactionId { get; set; }
@@ -144,6 +168,7 @@ namespace DBSTech
         private void displayGridView()
         {
             string accountId = ddl_accounts.SelectedValue;
+            Session["ddl_AccountNo"] = accountId;
             DateTime date_from = DateTime.Parse(html_date_from.Value);
             DateTime date_to = DateTime.Parse(html_date_to.Value);
 
@@ -159,10 +184,81 @@ namespace DBSTech
             }
         }
 
+        static DateTime startRange = new DateTime(2018, 01, 01);
+        static DateTime endRange = new DateTime(2018, 12, 31);
+
         [WebMethod]
-        public static string getBarChartData(string cropName)
+        public static List<barChart> getBarChartData()
         {
-            return "asdasd";
+            string accountNo = HttpContext.Current.Session["ddl_AccountNo"].ToString();
+            
+
+            SortedDictionary<int, debitCredit> dict = new SortedDictionary<int, debitCredit>();
+
+
+            List<Transactions> ListOFTransactions = api_getListOfTransactionsStatic(accountNo, startRange, endRange);
+
+            for (int i = 0; i < ListOFTransactions.Count; i++)
+            {
+                int month = DateTime.Parse(ListOFTransactions[i].date).Month;
+
+                if (dict.ContainsKey(month))
+                {
+                    debitCredit creditdebit = dict[month];
+
+                    if (ListOFTransactions[i].type == "DEBIT")
+                    {
+                        creditdebit.debit += float.Parse(ListOFTransactions[i].amount);
+                    }
+                    else if (ListOFTransactions[i].type == "CREDIT")
+                    {
+                        creditdebit.credit += float.Parse(ListOFTransactions[i].amount);
+                    }
+
+                    dict[month] = creditdebit;
+                }
+                else
+                {
+                    debitCredit creditdebit = new debitCredit();
+
+                    if (ListOFTransactions[i].type == "DEBIT")
+                    {
+                        creditdebit.debit += float.Parse(ListOFTransactions[i].amount);
+                    }
+                    else if (ListOFTransactions[i].type == "CREDIT")
+                    {
+                        creditdebit.credit += float.Parse(ListOFTransactions[i].amount);
+                    }
+
+                    dict.Add(month, creditdebit);
+                }
+
+            }
+
+            List<barChart> barChartData = new List<barChart>();
+            
+            foreach (KeyValuePair<int, debitCredit> entry in dict)
+            {
+                List<float> monthdata = new List<float>();
+                monthdata.Add(entry.Value.debit);
+                monthdata.Add(entry.Value.credit);
+
+                barChartData.Add(new barChart { month = entry.Key.ToString(), data = monthdata });
+            }
+
+            return barChartData;
+        }
+
+        public class debitCredit
+        {
+            public float debit { get; set; }
+            public float credit { get; set; }
+            
+        }
+        public class barChart
+        {
+            public string month { get; set; }
+            public List<float> data { get; set; }
         }
     }
 }
