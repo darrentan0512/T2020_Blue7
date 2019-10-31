@@ -16,9 +16,16 @@ namespace DBSTech
             //Label1.Text = $"CustomerID: {Session["customerID"].ToString()}";
 
             CustomerDetails custObj = api_getCustomerDetails(Session["customerID"].ToString());
-            Label1.Text = $"First Name: {custObj.firstName} <br/> Last Name: {custObj.lastName}";
+            Literal_Name.Text = custObj.lastName + " " + custObj.firstName;
+            Literal_LastLogin.Text = DateTime.Parse(custObj.lastLogIn).ToString("dd MMM yyyy HH:mm");
 
             List<DepositAccounts> depositObj = api_getListOfDepositAccounts(custObj.customerId);
+            ddl_accounts.DataSource = depositObj;
+            ddl_accounts.DataTextField = "accountDisplay";
+            ddl_accounts.DataValueField = "accountId";
+            ddl_accounts.DataBind();
+
+            displayGridView();
         }
 
         public CustomerDetails api_getCustomerDetails(string customerID)
@@ -80,6 +87,57 @@ namespace DBSTech
             public string type { get; set; }
             public string displayName { get; set; }
             public string accountNumber { get; set; }
+            public string accountDisplay { get { return displayName + " - " + accountNumber; } }
+        }
+
+        public List<Transactions> api_getListOfTransactions(string accountId)
+        {
+            var client = new RestClient($"http://techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com/transactions/{accountId}?from=01-01-2018&to=02-01-2019");
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("Connection", "keep-alive");
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("Host", "techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com");
+            request.AddHeader("Postman-Token", "11dd9441-13fa-498b-a131-2ff6d3f10a23,6e235017-a5be-4b44-b292-6213fd793060");
+            request.AddHeader("Cache-Control", "no-cache");
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("User-Agent", "PostmanRuntime/7.19.0");
+            request.AddHeader("token", "608cf106-2384-46de-8271-5c1f0b40ee5c");
+            request.AddHeader("identity", "Group7");
+            IRestResponse response = client.Execute(request);
+
+            List<Transactions> custDetailsObj = JsonConvert.DeserializeObject<List<Transactions>>(response.Content);
+
+            return custDetailsObj;
+        }
+
+        public class Transactions
+        {
+            public string transactionId { get; set; }
+            public string accountId { get; set; }
+            public string type { get; set; }
+            public string amount { get; set; }
+            public string date { get; set; }
+            public string tag { get; set; }
+            public string referenceNumber { get; set; }
+        }
+
+        protected void ddl_accounts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            displayGridView();
+        }
+
+        private void displayGridView()
+        {
+            string accountId = ddl_accounts.SelectedValue;
+
+            List<Transactions> ListOFTransactions = api_getListOfTransactions(accountId);
+            Literal_Display.Text = "";
+
+            for (int i = ListOFTransactions.Count - 1; i >= 0; i--)
+            {
+                Literal_Display.Text += $"<tr><td> {ListOFTransactions[i].type} </td><td> {ListOFTransactions[i].amount} </td><td> {DateTime.Parse(ListOFTransactions[i].date).ToString("dd MMM yyyy")} </td><td> {ListOFTransactions[i].tag} </td><td> {ListOFTransactions[i].referenceNumber} </td></tr>";
+            }
         }
     }
 }
