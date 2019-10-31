@@ -29,6 +29,7 @@
     <div id="wrapper">
 
         <div id="content-wrapper">
+<<<<<<< HEAD
             <div class="col-md-12 col-xs-12">
                 <div class="navbar navbar-light bg-light ">
                     <a class="navbar-brand d-flex justify-content-start" href="#">
@@ -40,6 +41,17 @@
                 </div>
             </div>
 
+=======
+            <nav class="navbar navbar-light bg-light">
+                <a class="navbar-brand" href="#">
+                    <img src="https://www.dbs.com.sg/iwov-resources/flp/images/dbs_logo.svg" height="40"
+                        class="d-inline-block align-top" alt="">
+                </a>
+                <p class="navbar-text">Welcome, FirstName LastName</p>
+                <p class="navbar-text">Last login : </p>
+            </nav>
+            <br>
+>>>>>>> b970cfe8f5dc8e96ead9daf17102c4fc07a1fc08
 
             <div class="container-fluid">
 
@@ -62,12 +74,29 @@
                     <div class="card-header">
                         <i class="fas fa-table"></i> Account Transaction Details</div>
                     <div class="card-body">
-                        Accounts : <select>
-              <!-- populate the accounts -->
+                        <div class="row" class="form-group">
+                            <div class="col-md-3 col-xs-12">
+                                Accounts :
+                                <!-- populate the accounts -->
+                                <select>
+                                    <option> Savings</option>
+                                    <option> Current </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-xs-12">
+                                Date From : <input type="text" class="form-control" id="date-from"
+                                    placeholder="Date For" name="date-from">
+                            </div>
 
-              
-            </select>
-                        <br><br>
+                            <div class="col-md-4 col-xs-12">
+                                Date To : <input type="text" class="form-control" id="date-to" placeholder="Date To"
+                                    name="date-to">
+                            </div>
+                            <div class="col-md-1 col-xs-12">
+                                <button type="button" class="btn btn-primary" style="margin-top:1rem"> Search </button>
+                            </div>
+                        </div>
+                        <hr />
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
