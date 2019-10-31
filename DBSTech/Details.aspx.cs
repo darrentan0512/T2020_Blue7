@@ -14,18 +14,23 @@ namespace DBSTech
         protected void Page_Load(object sender, EventArgs e)
         {
             //Label1.Text = $"CustomerID: {Session["customerID"].ToString()}";
+            if (!Page.IsPostBack)
+            {
+                CustomerDetails custObj = api_getCustomerDetails(Session["customerID"].ToString());
+                Literal_Name.Text = custObj.lastName + " " + custObj.firstName;
+                Literal_LastLogin.Text = DateTime.Parse(custObj.lastLogIn).ToString("dd MMM yyyy HH:mm");
+                html_date_to.Value = DateTime.Now.ToString("yyyy-MM-dd");
+                DateTime firstDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                html_date_from.Value = firstDay.ToString("yyyy-MM-dd");
 
-            CustomerDetails custObj = api_getCustomerDetails(Session["customerID"].ToString());
-            Literal_Name.Text = custObj.lastName + " " + custObj.firstName;
-            Literal_LastLogin.Text = DateTime.Parse(custObj.lastLogIn).ToString("dd MMM yyyy HH:mm");
+                List<DepositAccounts> depositObj = api_getListOfDepositAccounts(custObj.customerId);
+                ddl_accounts.DataSource = depositObj;
+                ddl_accounts.DataTextField = "accountDisplay";
+                ddl_accounts.DataValueField = "accountId";
+                ddl_accounts.DataBind();
 
-            List<DepositAccounts> depositObj = api_getListOfDepositAccounts(custObj.customerId);
-            ddl_accounts.DataSource = depositObj;
-            ddl_accounts.DataTextField = "accountDisplay";
-            ddl_accounts.DataValueField = "accountId";
-            ddl_accounts.DataBind();
-
-            displayGridView();
+                displayGridView();
+            }
         }
 
         public CustomerDetails api_getCustomerDetails(string customerID)
@@ -90,9 +95,12 @@ namespace DBSTech
             public string accountDisplay { get { return displayName + " - " + accountNumber; } }
         }
 
-        public List<Transactions> api_getListOfTransactions(string accountId)
+        public List<Transactions> api_getListOfTransactions(string accountId, DateTime date_from, DateTime date_to)
         {
-            var client = new RestClient($"http://techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com/transactions/{accountId}?from=01-01-2018&to=02-01-2019");
+            string json_from = date_from.ToString("MM-dd-yyyy");
+            string json_to = date_to.ToString("MM-dd-yyyy");
+
+            var client = new RestClient($"http://techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com/transactions/{accountId}?from={json_from}&to={json_to}");
             var request = new RestRequest(Method.GET);
             request.AddHeader("cache-control", "no-cache");
             request.AddHeader("Connection", "keep-alive");
@@ -124,19 +132,29 @@ namespace DBSTech
 
         protected void ddl_accounts_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //displayGridView();
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
             displayGridView();
         }
 
         private void displayGridView()
         {
             string accountId = ddl_accounts.SelectedValue;
+            DateTime date_from = DateTime.Parse(html_date_from.Value);
+            DateTime date_to = DateTime.Parse(html_date_to.Value);
 
-            List<Transactions> ListOFTransactions = api_getListOfTransactions(accountId);
+            List<Transactions> ListOFTransactions = api_getListOfTransactions(accountId, date_from, date_to);
             Literal_Display.Text = "";
 
-            for (int i = ListOFTransactions.Count - 1; i >= 0; i--)
+            if (ListOFTransactions != null)
             {
-                Literal_Display.Text += $"<tr><td> {ListOFTransactions[i].type} </td><td> {ListOFTransactions[i].amount} </td><td> {DateTime.Parse(ListOFTransactions[i].date).ToString("dd MMM yyyy")} </td><td> {ListOFTransactions[i].tag} </td><td> {ListOFTransactions[i].referenceNumber} </td></tr>";
+                for (int i = ListOFTransactions.Count - 1; i >= 0; i--)
+                {
+                    Literal_Display.Text += $"<tr><td> {ListOFTransactions[i].type} </td><td> {ListOFTransactions[i].amount} </td><td> {DateTime.Parse(ListOFTransactions[i].date).ToString("dd MMM yyyy")} </td><td> {ListOFTransactions[i].tag} </td><td> {ListOFTransactions[i].referenceNumber} </td></tr>";
+                }
             }
         }
     }

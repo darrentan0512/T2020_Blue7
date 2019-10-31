@@ -40,6 +40,33 @@ namespace DBSTech {
         protected global::System.Web.UI.WebControls.DropDownList ddl_accounts;
         
         /// <summary>
+        /// html_date_from control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl html_date_from;
+        
+        /// <summary>
+        /// html_date_to control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl html_date_to;
+        
+        /// <summary>
+        /// btn_Login control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btn_Login;
+        
+        /// <summary>
         /// Literal_Display control.
         /// </summary>
         /// <remarks>

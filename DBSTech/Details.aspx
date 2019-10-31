@@ -70,15 +70,15 @@
                                 </div>
                                 <div class="col-md-3 col-xs-12">
                                     Date From :
-                                    <input type="date" class="form-control" id="date-from" placeholder="Date For" name="date-from">
+                                    <input type="date" class="form-control" id="html_date_from" placeholder="Date For" name="date_from" runat="server">
                                 </div>
 
                                 <div class="col-md-3 col-xs-12">
                                     Date To :
-                                    <input type="date" class="form-control" id="date-to" placeholder="Date To" name="date-to">
+                                    <input type="date" class="form-control" id="html_date_to" placeholder="Date To" name="date_to" runat="server">
                                 </div>
                                 <div class="col-md-1 col-xs-12">
-                                    <button type="button" class="btn btn-primary" style="margin-top: 1rem">Search </button>
+                                    <asp:Button ID="btn_Login" runat="server" Text="Search" class="btn btn-primary" OnClick="Button1_Click"/>
                                 </div>
                             </div>
                             <hr />
