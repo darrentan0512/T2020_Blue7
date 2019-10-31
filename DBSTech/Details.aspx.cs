@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -20,7 +21,7 @@ namespace DBSTech
                 Literal_Name.Text = custObj.lastName + " " + custObj.firstName;
                 Literal_LastLogin.Text = DateTime.Parse(custObj.lastLogIn).ToString("dd MMM yyyy HH:mm");
                 html_date_to.Value = DateTime.Now.ToString("yyyy-MM-dd");
-                DateTime firstDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                DateTime firstDay = new DateTime(2018, 1, 1);
                 html_date_from.Value = firstDay.ToString("yyyy-MM-dd");
 
                 List<DepositAccounts> depositObj = api_getListOfDepositAccounts(custObj.customerId);
@@ -156,6 +157,12 @@ namespace DBSTech
                     Literal_Display.Text += $"<tr><td> {ListOFTransactions[i].type} </td><td> {ListOFTransactions[i].amount} </td><td> {DateTime.Parse(ListOFTransactions[i].date).ToString("dd MMM yyyy")} </td><td> {ListOFTransactions[i].tag} </td><td> {ListOFTransactions[i].referenceNumber} </td></tr>";
                 }
             }
+        }
+
+        [WebMethod]
+        public static string getBarChartData(string cropName)
+        {
+            return "asdasd";
         }
     }
 }
