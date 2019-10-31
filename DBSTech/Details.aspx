@@ -156,7 +156,7 @@
 
         <!-- Demo scripts for this page-->
         <script src="js/demo/datatables-demo.js"></script>
-      <%--  <script src="js/demo/chart-area-demo.js"></script>--%>
+        <%--  <script src="js/demo/chart-area-demo.js"></script>--%>
     </form>
 
 
@@ -170,17 +170,40 @@
             // Pie Chart Example
 
             var pieChartData = [];
-            var ctx = document.getElementById("myPieChart");
-            var myPieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ["Blue", "Red", "Yellow", "Green"],
-                    datasets: [{
-                        data: [100, 200, 11.25, 8.32],
-                        backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
-                    }],
-                },
+
+            $.ajax({
+                type: "POST",
+                url: "Details.aspx/getPieChartData",
+                contentType: "application/json; charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (msg) {
+                    pc(msg.d);
+                }
             });
+
+            function pc(pieChartData) {
+                var labels = [];
+                var data = [];
+                for (var i = 0; i < pieChartData.length; i++) {
+                    labels[i] = pieChartData[i]['Category'];
+                    data[i] = pieChartData[i]['Count'];
+                }
+                console.log(labels);
+                console.log(data);
+
+                var ctx = document.getElementById("myPieChart");
+                var myPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
+                        }],
+                    },
+                });
+            }
 
             var barChartData = [];
 
@@ -194,7 +217,7 @@
                     bc(msg.d);
                 }
             });
-            
+
             function bc(barChartData) {
                 // Bar Chart Example
                 var ctx = document.getElementById("myBarChart");

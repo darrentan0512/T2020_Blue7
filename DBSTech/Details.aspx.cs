@@ -249,6 +249,42 @@ namespace DBSTech
             return barChartData;
         }
 
+        [WebMethod]
+        public static List<pieChart> getPieChartData()
+        {
+            string accountNo = HttpContext.Current.Session["ddl_AccountNo"].ToString();
+            
+
+            SortedDictionary<string, int> dict = new SortedDictionary<string, int>();
+
+
+            List<Transactions> ListOFTransactions = api_getListOfTransactionsStatic(accountNo, startRange, endRange);
+
+            for (int i = 0; i < ListOFTransactions.Count; i++)
+            {
+                string category = ListOFTransactions[i].tag;
+
+                if (dict.ContainsKey(category))
+                {
+                    dict[category] += 1;
+                }
+                else
+                {
+                    dict.Add(category, 1);
+                }
+
+            }
+
+            List<pieChart> pieChartData = new List<pieChart>();
+
+            foreach (KeyValuePair<string, int> entry in dict)
+            {
+                pieChartData.Add(new pieChart { Category = entry.Key, Count = entry.Value });
+            }
+
+            return pieChartData;
+        }
+
         public class debitCredit
         {
             public float debit { get; set; }
@@ -259,6 +295,12 @@ namespace DBSTech
         {
             public string month { get; set; }
             public List<float> data { get; set; }
+        }
+
+        public class pieChart
+        {
+            public string Category { get; set; }
+            public int Count { get; set; }
         }
     }
 }
