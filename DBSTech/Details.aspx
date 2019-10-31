@@ -118,7 +118,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                        <div class="card-footer small text-muted"></div>
                     </div>
 
                 </div>
@@ -137,6 +137,32 @@
             <i class="fas fa-angle-up"></i>
         </a>
 
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="getMarketingMsg()">
+            DBS Messages
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Messages</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Dismiss</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <!-- Bootstrap core JavaScript-->
@@ -159,7 +185,42 @@
         <%--  <script src="js/demo/chart-area-demo.js"></script>--%>
     </form>
 
+            <script>
+            function getMarketingMsg() {
+                console.log("get some messages");
+                const userAction = async () => {
+                    const response = await fetch('http://techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com/marketing', {
+                        method: 'GET',
+                        headers: {
+                            'identity': 'Group7',
+                            'token': '608cf106-2384-46de-8271-5c1f0b40ee5c'
+                        }
+                    });
+                    const myJson = await response.json(); //extract JSON from the http response
+                    console.log(myJson);
+                    // do something with myJson
+                }
+            }
+        </script>
+        <script>
+            $.ajax({
+                method: "GET",
+                url: "http://techtrek-api-gateway.ap-southeast-1.elasticbeanstalk.com/marketing",
+                headers: {
+                    identity: 'Group7',
+                    token: '608cf106-2384-46de-8271-5c1f0b40ee5c'
+                }
+            }).done(function (data) {
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
 
+
+                    $('.list-group').append('<li class="list-group-item">' + data[i]['summary'] + '</li>');
+
+
+                }
+            });
+        </script>
     <script>
         function codeAddress() {
 
