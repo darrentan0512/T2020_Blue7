@@ -22,8 +22,7 @@
                 </div>
 
                 <!-- Login Form -->
-                <input type="text" runat="server" id="txt_login" class="fadeIn second" name="login" placeholder="login">
-                <input type="password" id="password" class="fadeIn third" name="login" placeholder="password">
+                <input type="text" runat="server" id="txt_login" class="fadeIn second" name="login" placeholder="User ID" required>
                 <asp:Button ID="btn_Login" runat="server" Text="Log In" class="fadeIn fourth" OnClick="Button1_Click"/>
                 <!-- Remind Passowrd -->
                 <div id="formFooter">
